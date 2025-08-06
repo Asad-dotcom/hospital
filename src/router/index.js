@@ -35,20 +35,22 @@ function requireAuth(to, from, next) {
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/', name: 'Home', component: () => import('@/views/LandingPage.vue') },
+    { path: '/', redirect: '/register' },
+    { path: '/login', name: 'UnifiedLogin', component: () => import('@/components/auth/UnifiedLogin.vue') },
+    { path: '/register', name: 'UnifiedRegister', component: () => import('@/components/auth/UnifiedRegister.vue') },
 
-    // ====== AUTH ROUTES ======
-    { path: '/patient/register', name: 'PatientRegister', component: () => import('@/components/auth/PatientRegister.vue') },
-    { path: '/doctor/register', name: 'DoctorRegister', component: () => import('@/components/auth/DoctorRegister.vue') },
-    { path: '/admin/register', name: 'AdminRegister', component: () => import('@/components/auth/AdminRegister.vue') },
-    { path: '/pharmacist/register', name: 'PharmacistRegister', component: () => import('@/components/auth/PharmacistRegister.vue') },
-    { path: '/receptionist/register', name: 'ReceptionistRegister', component: () => import('@/components/auth/ReceptionistRegister.vue') },
+    // ====== LEGACY AUTH ROUTES (for backward compatibility) ======
+    { path: '/patient/register', redirect: '/register' },
+    { path: '/doctor/register', redirect: '/register' },
+    { path: '/admin/register', redirect: '/register' },
+    { path: '/pharmacist/register', redirect: '/register' },
+    { path: '/receptionist/register', redirect: '/register' },
 
-    { path: '/patient/login', name: 'PatientLogin', component: () => import('@/components/auth/PatientLogin.vue') },
-    { path: '/doctor/login', name: 'DoctorLogin', component: () => import('@/components/auth/DoctorLogin.vue') },
-    { path: '/admin/login', name: 'AdminLogin', component: () => import('@/components/auth/AdminLogin.vue') },
-    { path: '/pharmacist/login', name: 'PharmacistLogin', component: () => import('@/components/auth/PharmacistLogin.vue') },
-    { path: '/receptionist/login', name: 'ReceptionistLogin', component: () => import('@/components/auth/ReceptionistLogin.vue') },
+    { path: '/patient/login', redirect: '/login' },
+    { path: '/doctor/login', redirect: '/login' },
+    { path: '/admin/login', redirect: '/login' },
+    { path: '/pharmacist/login', redirect: '/login' },
+    { path: '/receptionist/login', redirect: '/login' },
 
     // ====== DASHBOARDS ======
     { path: '/dashboard/patient', name: 'PatientDashboard', component: () => import('@/views/dashboard/PatientDashboard.vue'), beforeEnter: requireAuth },
@@ -102,6 +104,7 @@ router.beforeEach((to, from, next) => {
   // Define public routes that don't require authentication
   const publicRoutes = [
     '/', 
+    '/login', '/register',
     '/patient/login', '/doctor/login', '/admin/login', '/pharmacist/login', '/receptionist/login',
     '/patient/register', '/doctor/register', '/admin/register', '/pharmacist/register', '/receptionist/register'
   ];
@@ -111,21 +114,8 @@ router.beforeEach((to, from, next) => {
   // If trying to access a protected route without authentication
   if (!isPublicRoute) {
     if (!token || !user) {
-      // Redirect to appropriate login page
-      if (to.path.startsWith('/dashboard/patient') || to.path.startsWith('/patients')) {
-        next('/patient/login');
-      } else if (to.path.startsWith('/dashboard/doctor') || to.path.startsWith('/appointments') || 
-                 to.path.startsWith('/billing/prescriptions')) {
-        next('/doctor/login');
-      } else if (to.path.startsWith('/dashboard/admin') || to.path.startsWith('/doctors')) {
-        next('/admin/login');
-      } else if (to.path.startsWith('/dashboard/pharmacist') || to.path.startsWith('/inventory')) {
-        next('/pharmacist/login');
-      } else if (to.path.startsWith('/dashboard/receptionist') || to.path.startsWith('/billing')) {
-        next('/receptionist/login');
-      } else {
-        next('/');
-      }
+      // Redirect to unified login page
+      next('/login');
       return;
     }
   }
@@ -139,25 +129,7 @@ router.beforeEach((to, from, next) => {
       return;
     }
     
-    switch(user.role) {
-      case 'patient':
-        next('/dashboard/patient');
-        break;
-      case 'doctor':
-        next('/dashboard/doctor');
-        break;
-      case 'admin':
-        next('/dashboard/admin');
-        break;
-      case 'pharmacist':
-        next('/dashboard/pharmacist');
-        break;
-      case 'receptionist':
-        next('/dashboard/receptionist');
-        break;
-      default:
-        next('/');
-    }
+    next(targetDashboard);
     return;
   }
   

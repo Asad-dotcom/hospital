@@ -2,8 +2,9 @@ import axios from 'axios'
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'https://4f08886488fa.ngrok-free.app/api',
-  timeout: 10000,
+  // baseURL: 'https://3dd59871ab8f.ngrok-free.app/api',
+  baseURL: 'https://9de23352843e.ngrok-free.app/',
+  timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
   }
@@ -14,10 +15,10 @@ api.interceptors.request.use(
   (config) => {
     console.log('Making request to:', config.url)
     // You can add auth tokens here if needed
-    // const token = localStorage.getItem('token')
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`
-    // }
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error) => {

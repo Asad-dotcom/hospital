@@ -1,52 +1,75 @@
+import authService from '@/api/services/authService'
+
 const state = {
-  users: [],
   currentUser: null,
+  token: localStorage.getItem('token') || null,
+  loading: false,
+  error: null
 };
 
 const mutations = {
-  registerUser(state, user) {
-    const existing = state.users.find(
-      (u) => u.email === user.email && u.role === user.role
-    );
-    if (!existing) {
-      state.users.push(user);
-    }
+  SET_LOADING(state, loading) {
+    state.loading = loading;
   },
-  setCurrentUser(state, user) {
+  SET_ERROR(state, error) {
+    state.error = error;
+  },
+  SET_CURRENT_USER(state, user) {
     state.currentUser = user;
   },
-  logout(state) {
-    state.currentUser = null;
+  SET_TOKEN(state, token) {
+    state.token = token;
   },
+  LOGOUT(state) {
+    state.currentUser = null;
+    state.token = null;
+  }
 };
 
 const actions = {
-  login({ commit, state }, { email, password, role }) {
-    return new Promise((resolve, reject) => {
-      
-      const user = state.users.find(
-        (u) => u.email === email && u.password === password && u.role === role
-      );
-      if (user) {
-        // Generate a simple token for authentication
-        const token = btoa(JSON.stringify({ email: user.email, role: user.role }));
-        localStorage.setItem('token', token);
-        commit("setCurrentUser", user);
-        resolve();
-      } else {
-        reject("Invalid credentials");
-      }
-    });
+  async login({ commit }, { email, password, role }) {
+    commit('SET_LOADING', true);
+    commit('SET_ERROR', null);
+    try {
+      const data = await authService.login({ email, password, role });
+      const token = data.token;
+      localStorage.setItem('token', token);
+      commit('SET_TOKEN', token);
+      // Fetch current user info
+      const user = await authService.getCurrentUser();
+      commit('SET_CURRENT_USER', user);
+      commit('SET_LOADING', false);
+    } catch (error) {
+      commit('SET_ERROR', error);
+      commit('SET_LOADING', false);
+      throw error;
+    }
+  },
+  async register({ commit }, userData) {
+    console.log(userData, 'userData .......')
+    commit('SET_LOADING', true);
+    commit('SET_ERROR', null);
+    try {
+      await authService.register(userData);
+      commit('SET_LOADING', false);
+    } catch (error) {
+      commit('SET_ERROR', error);
+      commit('SET_LOADING', false);
+      throw error;
+    }
   },
   logout({ commit }) {
+    authService.logout();
+    commit('LOGOUT');
     localStorage.removeItem('token');
-    commit("logout");
-  },
+  }
 };
 
 const getters = {
-  isAuthenticated: (state) => !!state.currentUser,
+  isAuthenticated: (state) => !!state.token,
   currentUser: (state) => state.currentUser,
+  loading: (state) => state.loading,
+  error: (state) => state.error
 };
 
 export default {
