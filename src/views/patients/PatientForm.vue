@@ -1,73 +1,60 @@
 <template>
   <div class="container py-4">
-    <h3>{{ isEditMode ? 'Edit Patient' : 'Register New Patient' }}</h3>
+    <h3 class="mb-4">{{ isEditMode ? 'Edit Patient' : 'Add New Patient' }}</h3>
 
-    <form @submit.prevent="savePatient" class="mt-3">
-      <div class="form-group mb-3">
-        <label>Name</label>
-        <input 
-          v-model="form.name" 
-          type="text" 
-          class="form-control" 
-          :class="{ 'is-invalid': errors.name }"
-          required 
-        />
-        <div v-if="errors.name" class="invalid-feedback">
-          {{ errors.name }}
+    <form @submit.prevent="submitForm" class="mt-3">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label>Name <span class="text-danger">*</span></label>
+            <input v-model="form.name" type="text" class="form-control" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Email <span class="text-danger">*</span></label>
+            <input v-model="form.email" type="email" class="form-control" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Phone</label>
+            <input v-model="form.phone" type="tel" class="form-control">
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Date of Birth</label>
+            <input v-model="form.dob" type="date" class="form-control">
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Gender</label>
+            <select v-model="form.gender" class="form-select">
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label>Address</label>
+            <textarea v-model="form.address" class="form-control" rows="3"></textarea>
+          </div>
         </div>
       </div>
 
-      <div class="form-group mb-3">
-        <label>Email</label>
-        <input 
-          v-model="form.email" 
-          type="email" 
-          class="form-control" 
-          :class="{ 'is-invalid': errors.email }"
-          required 
-        />
-        <div v-if="errors.email" class="invalid-feedback">
-          {{ errors.email }}
-        </div>
+      <div class="d-flex justify-content-end mt-3">
+        <button type="button" @click="cancel" class="btn btn-outline-secondary me-2">Cancel</button>
+        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Add' }} Patient</button>
       </div>
-
-      <div class="form-group mb-3">
-        <label>Phone</label>
-        <input 
-          v-model="form.phone" 
-          type="text" 
-          class="form-control" 
-          :class="{ 'is-invalid': errors.phone }"
-        />
-        <div v-if="errors.phone" class="invalid-feedback">
-          {{ errors.phone }}
-        </div>
-      </div>
-
-      <div class="form-group mb-3">
-        <label>Gender</label>
-        <select 
-          v-model="form.gender" 
-          class="form-control" 
-          :class="{ 'is-invalid': errors.gender }"
-        >
-          <option disabled value="">Select Gender</option>
-          <option>Male</option>
-          <option>Female</option>
-        </select>
-        <div v-if="errors.gender" class="invalid-feedback">
-          {{ errors.gender }}
-        </div>
-      </div>
-
-      <button type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Register' }}</button>
-      <router-link to="/patients" class="btn btn-secondary ms-2">Cancel</router-link>
     </form>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'PatientForm',
   data() {
     return {
       form: {
@@ -75,70 +62,89 @@ export default {
         email: '',
         phone: '',
         gender: '',
-        active: true,
+        dob: '',
+        address: ''
       },
-      formIndex: null,
       errors: {}
     };
   },
   computed: {
     isEditMode() {
-      return this.$route.name === 'EditPatient';
+      return this.$route.params.id !== undefined;
     },
+    patientId() {
+      return parseInt(this.$route.params.id);
+    }
   },
-  mounted() {
+  async created() {
     if (this.isEditMode) {
-      const id = this.$route.params.id;
-      const patient = this.$store.state.patients.list[id];
-      if (patient) {
-        this.form = { ...patient };
-        this.formIndex = id;
-      }
+      await this.loadPatientData();
     }
   },
   methods: {
+    async loadPatientData() {
+      try {
+        const patient = this.$store.getters['patients/getPatientById'](this.patientId);
+        if (patient) {
+          this.form = { ...patient };
+        }
+      } catch (error) {
+        console.error('Error loading patient:', error);
+      }
+    },
     validateForm() {
       this.errors = {};
+      let isValid = true;
       
-      // Name validation
-      if (!this.form.name) {
+      if (!this.form.name.trim()) {
         this.errors.name = 'Name is required';
-      } else if (this.form.name.length < 2) {
-        this.errors.name = 'Name must be at least 2 characters';
+        isValid = false;
       }
       
-      // Email validation
-      if (!this.form.email) {
+      if (!this.form.email.trim()) {
         this.errors.email = 'Email is required';
-      } else if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.form.email)) {
-        this.errors.email = 'Please enter a valid email address';
+        isValid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
+        this.errors.email = 'Please enter a valid email';
+        isValid = false;
       }
       
-      // Phone validation (optional but if provided, should be valid)
-      if (this.form.phone && !/^[0-9+\-\s()]+$/.test(this.form.phone)) {
-        this.errors.phone = 'Please enter a valid phone number';
-      }
-      
-      // Gender validation
-      if (!this.form.gender) {
-        this.errors.gender = 'Please select a gender';
-      }
-      
-      return Object.keys(this.errors).length === 0;
+      return isValid;
     },
-    savePatient() {
-      if (this.validateForm()) {
+    async submitForm() {
+      if (!this.validateForm()) return;
+      
+      try {
+        const patientData = {
+          ...this.form,
+          updatedAt: new Date().toISOString()
+        };
+        
         if (this.isEditMode) {
-          this.$store.commit('patients/UPDATE_PATIENT', {
-            index: this.formIndex,
-            data: this.form,
+          await this.$store.dispatch('patients/updatePatient', {
+            id: this.patientId,
+            data: patientData
           });
         } else {
-          this.$store.commit('patients/ADD_PATIENT', this.form);
+          patientData.createdAt = new Date().toISOString();
+          await this.$store.dispatch('patients/addPatient', patientData);
         }
+        
         this.$router.push('/patients');
+      } catch (error) {
+        console.error('Error saving patient:', error);
+        alert('Error saving patient. Please try again.');
       }
     },
-  },
+    cancel() {
+      this.$router.push('/patients');
+    }
+  }
 };
 </script>
+
+<style scoped>
+.container {
+  max-width: 800px;
+}
+</style>

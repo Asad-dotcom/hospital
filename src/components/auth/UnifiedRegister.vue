@@ -65,7 +65,7 @@
                   required
                 >
                   <option value="">Select your role</option>
-                  <option value="admin">Admin</option>
+                  <option value="admin" disabled>Admin</option>
                   <option value="doctor">Doctor</option>
                   <option value="patient">Patient</option>
                   <option value="pharmacist">Pharmacist</option>
@@ -156,7 +156,7 @@ export default {
       this.registerStatus = { type: '', message: '' };
 
       try {
-        await this.$store.dispatch('auth/register', { ...this.form });
+        await this.$store.dispatch('/register', { ...this.form });
 
         this.registerStatus = {
           type: 'success',

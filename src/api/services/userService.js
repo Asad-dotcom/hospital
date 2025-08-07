@@ -2,64 +2,77 @@ import api from '../index'
 
 export const userService = {
   // Get all users
-  getUsers() {
-    return api.get('/users')
+  async getUsers() {
+    const response = await api.get('/users')
+    return response.data
   },
 
   // Get single user by ID
-  getUser(id) {
-    return api.get(`/users/${id}`)
+  async getUser(id) {
+    const response = await api.get(`/users/${id}`)
+    return response.data
   },
 
   // Create new user
-  createUser(userData) {
-    return api.post('/users', userData)
+  async createUser(userData) {
+    const response = await api.post('/users', userData)
+    return response.data
   },
 
   // Update user
-  updateUser(id, userData) {
-    return api.put(`/users/${id}`, userData)
+  async updateUser(id, userData) {
+    const response = await api.put(`/users/${id}`, userData)
+    return response.data
   },
 
   // Delete user
-  deleteUser(id) {
-    return api.delete(`/users/${id}`)
+  async deleteUser(id) {
+    const response = await api.delete(`/users/${id}`)
+    return response.data
   },
 
-  // Get user appointments (example endpoint)
-  getUserAppointments(userId) {
-    return api.get(`/users/${userId}/appointments`)
+  // Get user appointments
+  async getUserAppointments(userId) {
+    const response = await api.get(`/users/${userId}/appointments`)
+    return response.data
   },
 
   // Get all appointments
-  getAppointments() {
-    return api.get('/appointments')
+  async getAppointments() {
+    const response = await api.get('/appointments')
+    return response.data
   },
 
   // Get all doctors
-  getDoctors() {
-    return api.get('/doctors')
+  async getDoctors() {
+    const response = await api.get('/doctors')
+    return response.data
   },
 
   // Get all patients
-  getPatients() {
-    return api.get('/patients')
+  async getPatients() {
+    const response = await api.get('/patients')
+    return response.data
   },
 
   // Generic method for any endpoint
-  get(endpoint) {
-    return api.get(endpoint)
+  async get(endpoint) {
+    const response = await api.get(endpoint)
+    return response.data
   },
 
-  post(endpoint, data) {
-    return api.post(endpoint, data)
+  async post(endpoint, data) {
+    const response = await api.post(endpoint, data)
+    return response.data
   },
 
-  put(endpoint, data) {
-    return api.put(endpoint, data)
+  async put(endpoint, data) {
+    const response = await api.put(endpoint, data)
+    return response.data
   },
 
-  delete(endpoint) {
-    return api.delete(endpoint)
+  async delete(endpoint) {
+    const response = await api.delete(endpoint)
+    return response.data
   }
 }

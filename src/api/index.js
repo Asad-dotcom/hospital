@@ -2,8 +2,7 @@ import axios from 'axios'
 
 // Create axios instance with base configuration
 const api = axios.create({
-  // baseURL: 'https://3dd59871ab8f.ngrok-free.app/api',
-  baseURL: 'https://9de23352843e.ngrok-free.app/',
+  baseURL: 'http://192.168.12.106:8000/api',
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
@@ -14,7 +13,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     console.log('Making request to:', config.url)
-    // You can add auth tokens here if needed
+    // Add auth token if available
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -36,8 +35,10 @@ api.interceptors.response.use(
   (error) => {
     console.error('Response error:', error)
     if (error.response?.status === 401) {
-      // Handle unauthorized access
+      // Handle unauthorized access - redirect to login
       console.log('Unauthorized - redirect to login')
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
     }
     return Promise.reject(error)
   }
