@@ -4,7 +4,9 @@ class AuthService {
   // Unified login for all roles
   async login(credentials) {
     try {
+      console.log('Attempting login with:', credentials);
       const response = await api.post('/login', credentials)
+      console.log('Login response:', response.data);
       
       if (response.data.token) {
         localStorage.setItem('token', response.data.token)
@@ -14,14 +16,24 @@ class AuthService {
       return response.data
     } catch (error) {
       console.error('Login error:', error)
-      throw error.response?.data || { message: 'Login failed' }
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        throw error.response.data
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+        throw { message: 'Network error. Please check your connection.' }
+      } else {
+        throw { message: 'Login failed. Please try again.' }
+      }
     }
   }
 
   // Unified registration for all roles
   async register(userData) {
     try {
+      console.log('Attempting registration with:', userData);
       const response = await api.post('/register', userData)
+      console.log('Registration response:', response.data);
       
       if (response.data.token) {
         localStorage.setItem('token', response.data.token)
@@ -31,7 +43,15 @@ class AuthService {
       return response.data
     } catch (error) {
       console.error('Register error:', error)
-      throw error.response?.data || { message: 'Registration failed' }
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        throw error.response.data
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+        throw { message: 'Network error. Please check your connection.' }
+      } else {
+        throw { message: 'Registration failed. Please try again.' }
+      }
     }
   }
 

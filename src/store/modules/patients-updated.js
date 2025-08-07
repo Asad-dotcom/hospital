@@ -50,7 +50,7 @@ const actions = {
       commit('SET_PATIENTS', []);
     }
   },
-  async savePatients({ state, rootState }) {
+  async savePatients({ state }) {
     try {
       // Get all users from localStorage
       const allUsers = JSON.parse(localStorage.getItem('users') || '[]');

@@ -156,7 +156,8 @@ export default {
       this.registerStatus = { type: '', message: '' };
 
       try {
-        await this.$store.dispatch('/register', { ...this.form });
+        // Use authService directly instead of Vuex for now
+        await this.$store.dispatch('auth/register', this.form);
 
         this.registerStatus = {
           type: 'success',
@@ -167,9 +168,10 @@ export default {
           this.$router.push('/login');
         }, 1500);
       } catch (err) {
+        console.error('Registration error:', err);
         this.registerStatus = {
           type: 'danger',
-          message: err.response?.data?.message || 'Registration failed. Please try again.'
+          message: err.message || err.response?.data?.message || 'Registration failed. Please try again.'
         };
       } finally {
         this.isRegistering = false;
