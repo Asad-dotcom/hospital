@@ -41,9 +41,8 @@ const mutations = {
 const actions = {
   async fetchPatients({ commit }) {
     try {
-      // Fetch users with role 'patient' from localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const patients = users.filter(user => user.role === 'patient');
+      const PatientService = (await import('@/api/services/patientService')).default;
+      const patients = await PatientService.getPatients();
       commit('SET_PATIENTS', patients);
     } catch (error) {
       console.error('Error fetching patients:', error);
@@ -52,34 +51,31 @@ const actions = {
   },
   async savePatients({ state }) {
     try {
-      // Get all users from localStorage
-      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      
-      // Update or add patients in the users array
-      state.list.forEach(patient => {
-        const index = allUsers.findIndex(u => u.id === patient.id);
-        if (index !== -1) {
-          allUsers[index] = patient;
+      const PatientService = (await import('@/api/services/patientService')).default;
+      for (const patient of state.list) {
+        if (patient.id) {
+          await PatientService.updatePatient(patient.id, patient);
         } else {
-          allUsers.push(patient);
+          await PatientService.createPatient(patient);
         }
-      });
-      
-      // Save back to localStorage
-      localStorage.setItem('users', JSON.stringify(allUsers));
+      }
     } catch (error) {
       console.error('Error saving patients:', error);
     }
   },
   async addPatient({ commit, dispatch }, patient) {
-    // Ensure the role is set to 'patient'
-    const patientWithRole = {
-      ...patient,
-      role: 'patient',
-      active: true
-    };
-    commit('ADD_PATIENT', patientWithRole);
-    await dispatch('savePatients');
+    try {
+      const PatientService = (await import('@/api/services/patientService')).default;
+      const patientWithRole = {
+        ...patient,
+        role: 'patient',
+        active: true
+      };
+      const newPatient = await PatientService.createPatient(patientWithRole);
+      commit('ADD_PATIENT', newPatient);
+    } catch (error) {
+      console.error('Error adding patient:', error);
+    }
   },
   async loadSignUpPatients({ dispatch }) {
     await dispatch('fetchPatients');
