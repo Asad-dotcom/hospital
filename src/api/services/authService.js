@@ -4,6 +4,7 @@ import api from '../index.js'
 class AuthService {
  async login(credentials) {
   // Always hit the API
+  console.log("Login payload:", credentials);
   const response = await api.post('/login', credentials)
 
   const token = response.data?.data?.access_token

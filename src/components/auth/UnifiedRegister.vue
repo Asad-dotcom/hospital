@@ -155,7 +155,8 @@ export default {
   this.registerStatus = { type: '', message: '' };
 
   try {
-    await this.$store.dispatch('/register', this.form);
+  await this.$store.dispatch('auth/register', this.form);
+
 
     this.registerStatus = {
       type: 'success',
