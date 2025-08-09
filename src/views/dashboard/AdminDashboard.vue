@@ -8,7 +8,12 @@
             <i :class="card.icon" class="display-4 mb-3 text-primary"></i>
             <h5 class="card-title">{{ card.title }}</h5>
             <p class="card-text">{{ card.description }}</p>
-            <button class="btn btn-outline-primary btn-sm" @click="handleManage(card.title)">Manage</button>
+            <button 
+              class="btn btn-outline-primary btn-sm" 
+              @click="handleNavigation(card.route)"
+            >
+              Manage
+            </button>
           </div>
         </div>
       </div>
@@ -25,60 +30,66 @@ export default {
           title: 'Patients',
           icon: 'bi bi-people-fill',
           description: 'Register and view patient information',
+          route: '/patients'
         },
         {
           title: 'Doctors',
           icon: 'bi bi-person-badge-fill',
           description: 'Manage doctor profiles and availability',
+          route: '/doctors'
         },
         {
           title: 'Appointments',
           icon: 'bi bi-calendar-check-fill',
           description: 'Review and approve appointments',
+          route: '/appointments'
         },
         {
           title: 'Inventory',
           icon: 'bi bi-box-seam',
           description: 'Track medicine and stock levels',
+          route: '/inventory'
         },
         {
           title: 'Billing',
           icon: 'bi bi-receipt-cutoff',
           description: 'Generate and view billing records',
+          route: '/billing'
         },
         {
           title: 'Prescriptions',
           icon: 'bi bi-file-earmark-medical-fill',
           description: 'Manage prescriptions and downloads',
-        },
-      ],
+          route: '/prescriptions'
+        }
+      ]
     };
   },
   methods: {
-    handleManage(title) {
-      switch (title) {
-        case 'Patients':
-          this.$router.push('/patients');
-          break;
-        case 'Doctors':
-          this.$router.push('/doctors');
-          break;
-        case 'Appointments':
-          alert('Access denied: Appointments management is restricted to doctors.');
-          break;
-        case 'Inventory':
-          alert('Access denied: Inventory management is restricted to pharmacists.');
-          break;
-        case 'Billing':
-          alert('Access denied: Billing management is restricted to receptionists.');
-          break;
-        case 'Prescriptions':
-          alert('Access denied: Prescription management is restricted to doctors.');
-          break;
-        default:
-          break;
-      }
-    },
-  },
+    handleNavigation(route) {
+      this.$router.push(route);
+    }
+  }
 };
 </script>
+
+<style scoped>
+.card {
+  transition: transform 0.2s;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.btn {
+  align-self: center;
+}
+</style>

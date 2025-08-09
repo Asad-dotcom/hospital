@@ -3,13 +3,13 @@ import Router from 'vue-router';
 
 Vue.use(Router);
 
-const router = new Router({
+export default new Router({
   mode: 'history',
   routes: [
     // Root Redirect
     { path: '/', redirect: '/register' },
 
-    // Unified Login & Register
+    // Auth Routes
     { path: '/login', name: 'UnifiedLogin', component: () => import('@/components/auth/UnifiedLogin.vue') },
     { path: '/register', name: 'UnifiedRegister', component: () => import('@/components/auth/UnifiedRegister.vue') },
 
@@ -63,10 +63,7 @@ const router = new Router({
     { path: '/billing/prescriptions/new', name: 'PrescriptionForm', component: () => import('@/views/billing/PrescriptionForm.vue') },
     { path: '/billing/prescriptions/:id/edit', name: 'PrescriptionEdit', component: () => import('@/views/billing/PrescriptionForm.vue') },
 
-    // 404
+    // 404 - Keep at the end
     { path: '*', name: 'NotFound', component: () => import('@/views/NotFound.vue') }
   ]
 });
-
-// No navigation guards applied
-export default router;

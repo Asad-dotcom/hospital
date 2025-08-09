@@ -81,8 +81,6 @@
 </template>
 
 <script>
-import authService from '@/api/services/authService'
-
 export default {
   name: 'UnifiedLogin',
   data() {
@@ -122,41 +120,41 @@ export default {
 
       return Object.keys(this.errors).length === 0;
     },
-    async login() {
-      if (!this.validateForm()) {
-        return;
-      }
+async login() {
+  if (!this.validateForm()) return;
 
-      this.isLoggingIn = true;
-      this.loginStatus = { type: '', message: '' };
+  // Always clear old session first
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
 
-      try {
-        // Call login API directly from authService (not Vuex for now)
-        await authService.login(this.form);
+  this.isLoggingIn = true;
+  this.loginStatus = { type: '', message: '' };
 
-        this.loginStatus = {
-          type: 'success',
-          message: 'Login successful! Redirecting...'
-        };
+  try {
+    const { user } = await this.$store.dispatch('auth/login', this.form);
 
-          // Manually redirect based on role - use replace to prevent history issues
-          setTimeout(() => {
-            this.$router.replace(`/dashboard/${this.form.role}`);
-          }, 1000);
+    if (!user?.role) throw new Error('No role found for user');
 
-      } catch (err) {
-        this.loginStatus = {
-          type: 'danger',
-          message: err.message || `Invalid credentials for ${this.form.role}. Please try again.`
-        };
-      } finally {
-        this.isLoggingIn = false;
-      }
-    }
+    this.loginStatus = {
+      type: 'success',
+      message: 'Login successful! Redirecting...'
+    };
+
+    setTimeout(() => {
+      this.$router.push(`/dashboard/${user.role}`);
+    }, 1000);
+  } catch (err) {
+    this.loginStatus = {
+      type: 'danger',
+      message: err.message || 'Login failed'
+    };
+  } finally {
+    this.isLoggingIn = false;
+  }
+}
   }
 };
 </script>
-
 <style scoped>
 .card {
   border: none;

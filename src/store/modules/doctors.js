@@ -14,6 +14,11 @@ const mutations = {
       state.list.splice(index, 1, { ...state.list[index], ...data });
     }
   },
+   DELETE_DOCTOR(state, index) {
+    if (index >= 0 && index < state.list.length) {
+      state.list.splice(index, 1)
+    }
+  },
   TOGGLE_DOCTOR_STATUS(state, index) {
     if (state.list[index]) {
       state.list[index].active = !state.list[index].active;

@@ -108,7 +108,8 @@ export default {
         name: '',
         email: '',
         password: '',
-        role: ''
+        role: '',
+        // Add other fields as needed by your backend
       },
       errors: {},
       isRegistering: false,
@@ -147,40 +148,35 @@ export default {
       return Object.keys(this.errors).length === 0;
     },
 
-    async register() {
-      if (!this.validateForm()) {
-        return;
-      }
+  async register() {
+  if (!this.validateForm()) return;
 
-      this.isRegistering = true;
-      this.registerStatus = { type: '', message: '' };
+  this.isRegistering = true;
+  this.registerStatus = { type: '', message: '' };
 
-      try {
-        // Use authService directly instead of Vuex for now
-        await this.$store.dispatch('auth/register', this.form);
+  try {
+    await this.$store.dispatch('/register', this.form);
 
-        this.registerStatus = {
-          type: 'success',
-          message: 'Account created successfully! Redirecting to login...'
-        };
+    this.registerStatus = {
+      type: 'success',
+      message: 'Account created successfully! Redirecting to login...'
+    };
 
-        setTimeout(() => {
-          this.$router.push('/login');
-        }, 1500);
-      } catch (err) {
-        console.error('Registration error:', err);
-        this.registerStatus = {
-          type: 'danger',
-          message: err.message || err.response?.data?.message || 'Registration failed. Please try again.'
-        };
-      } finally {
-        this.isRegistering = false;
-      }
-    }
+    setTimeout(() => {
+      this.$router.push('/login');
+    }, 1500);
+  } catch (err) {
+    this.registerStatus = {
+      type: 'danger',
+      message: err.message || 'Registration failed'
+    };
+  } finally {
+    this.isRegistering = false;
+  }
+}
   }
 };
 </script>
-
 <style scoped>
 .card {
   border: none;
