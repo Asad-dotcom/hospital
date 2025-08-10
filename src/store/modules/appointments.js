@@ -1,40 +1,85 @@
+import AppointmentService from '../../api/services/appointmentService'
+
 const state = {
-  list: [],
-};
+  appointments: [],
+  loading: false,
+  error: null
+}
 
 const mutations = {
-  ADD_APPOINTMENT(state, appointment) {
-    state.list.push({
-      ...appointment,
-      id: Date.now(), // Simple ID generation
-      patient: 'Current Patient', // In a real app, this would come from the logged-in user
-    });
+  SET_APPOINTMENTS(state, appointments) {
+    state.appointments = appointments
   },
-  UPDATE_APPOINTMENT_STATUS(state, { index, status }) {
-    if (state.list[index]) {
-      state.list[index].status = status;
-    }
+  SET_LOADING(state, loading) {
+    state.loading = loading
   },
-};
+  SET_ERROR(state, error) {
+    state.error = error
+  }
+}
 
 const actions = {
-  addAppointment({ commit }, appointment) {
-    commit('ADD_APPOINTMENT', appointment);
+  async fetchAppointments({ commit }, params = {}) {
+    commit('SET_LOADING', true)
+    try {
+      const response = await AppointmentService.getAllAppointments(params)
+      commit('SET_APPOINTMENTS', response.data)
+      commit('SET_ERROR', null)
+    } catch (error) {
+      commit('SET_ERROR', error.message || 'Failed to fetch appointments')
+    } finally {
+      commit('SET_LOADING', false)
+    }
   },
-  updateAppointmentStatus({ commit }, payload) {
-    commit('UPDATE_APPOINTMENT_STATUS', payload);
+  
+  async updateStatus({ commit }, { id, status }) {
+    try {
+      await AppointmentService.updateAppointmentStatus(id, status)
+      commit('SET_ERROR', null)
+      return true
+    } catch (error) {
+      commit('SET_ERROR', error.message || 'Failed to update status')
+      throw error
+    }
   },
-};
+  
+  async createAppointment({ commit }, appointmentData) {
+    commit('SET_LOADING', true)
+    try {
+      const response = await AppointmentService.createAppointment(appointmentData)
+      commit('SET_ERROR', null)
+      return response.data
+    } catch (error) {
+      commit('SET_ERROR', error.message || 'Failed to create appointment')
+      throw error
+    } finally {
+      commit('SET_LOADING', false)
+    }
+  },
+  
+  async deleteAppointment({ commit }, id) {
+    try {
+      await AppointmentService.deleteAppointment(id)
+      commit('SET_ERROR', null)
+      return true
+    } catch (error) {
+      commit('SET_ERROR', error.message || 'Failed to delete appointment')
+      throw error
+    }
+  }
+}
 
 const getters = {
-  appointments: (state) => state.list,
-  pendingAppointments: (state) => state.list.filter(a => a.status === 'Pending'),
-};
+  appointments: state => state.appointments,
+  pendingAppointments: state => state.appointments.filter(a => a.status === 'pending'),
+  isLoading: state => state.loading,
+  error: state => state.error
+}
 
 export default {
   namespaced: true,
   state,
   mutations,
   actions,
-  getters,
-};
+  getters
+}

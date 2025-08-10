@@ -33,25 +33,35 @@ const mutations = {
 };
 
 const actions = {
-  async fetchDoctors({ commit }) {
-    commit('SET_LOADING', true);
-    commit('SET_ERROR', null);
-    
-    try {
-      const DoctorService = (await import('@/api/services/doctorService-enhanced')).default;
-      const doctors = await DoctorService.getDoctors();
-      commit('SET_DOCTORS', doctors);
-    } catch (error) {
-      if (error.message?.includes('Authentication') || error.message?.includes('permission')) {
-        commit('SET_ERROR', error.message);
-      } else {
-        commit('SET_ERROR', 'Failed to load doctors. Please try again.');
-      }
-      console.error('Error loading doctors:', error);
-    } finally {
-      commit('SET_LOADING', false);
-    }
-  },
+ async fetchDoctors({ commit }) {
+  commit('SET_LOADING', true)
+  commit('SET_ERROR', null)
+  try {
+    const doctors = await EnhancedDoctorService.getDoctors()
+    commit('SET_DOCTORS', doctors)
+  } catch (error) {
+    commit('SET_ERROR', error.message || 'Failed to load doctors')
+  } finally {
+    commit('SET_LOADING', false)
+  }
+},
+async addDoctor({ commit }, doctor) {
+  const newDoctor = await EnhancedDoctorService.createDoctor(doctor)
+  commit('ADD_DOCTOR', newDoctor)
+},
+async updateDoctor({ commit, state }, { id, data }) {
+  const updatedDoctor = await EnhancedDoctorService.updateDoctor(id, data)
+  const index = state.list.findIndex(d => d.id === id)
+  if (index !== -1) {
+    commit('UPDATE_DOCTOR', { index, data: updatedDoctor })
+  }
+},
+async deleteDoctor({ commit, state }, id) {
+  await EnhancedDoctorService.deleteDoctor(id)
+  const index = state.list.findIndex(d => d.id === id)
+  if (index !== -1) commit('REMOVE_DOCTOR', index)
+}
+,
   
   async addDoctor({ commit }, doctor) {
     try {

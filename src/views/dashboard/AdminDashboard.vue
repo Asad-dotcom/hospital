@@ -5,15 +5,15 @@
       <div class="col-md-4" v-for="card in cards" :key="card.title">
         <div class="card shadow-sm">
           <div class="card-body text-center">
-            <i :class="card.icon" class="display-4 mb-3 text-primary"></i>
+            <i :class="[card.icon, 'display-4', 'mb-3', 'text-primary']"></i>
             <h5 class="card-title">{{ card.title }}</h5>
             <p class="card-text">{{ card.description }}</p>
-            <button 
-              class="btn btn-outline-primary btn-sm" 
-              @click="handleNavigation(card.route)"
+            <router-link
+              :to="card.route"
+              class="btn btn-outline-primary btn-sm"
             >
               Manage
-            </button>
+            </router-link>
           </div>
         </div>
       </div>
@@ -27,49 +27,44 @@ export default {
     return {
       cards: [
         {
-          title: 'Patients',
-          icon: 'bi bi-people-fill',
-          description: 'Register and view patient information',
-          route: '/patients'
+          title: "Patients",
+          icon: "bi bi-people-fill",
+          description: "Register and view patient information",
+          route: "/patients",
         },
         {
-          title: 'Doctors',
-          icon: 'bi bi-person-badge-fill',
-          description: 'Manage doctor profiles and availability',
-          route: '/doctors'
+          title: "Doctors",
+          icon: "bi bi-person-badge-fill",
+          description: "Manage doctor profiles and availability",
+          route: "/doctors",
         },
         {
-          title: 'Appointments',
-          icon: 'bi bi-calendar-check-fill',
-          description: 'Review and approve appointments',
-          route: '/appointments'
+          title: "Appointments",
+          icon: "bi bi-calendar-check-fill",
+          description: "Manage all appointment activities",
+          route: "/admin/appointments",
+        },
+      { 
+  title: 'Inventory', 
+    icon: 'bi bi-box-seam', 
+    description: 'Track medicine and stock levels', 
+    route: '/inventory'
+  },
+        {
+          title: "Billing",
+          icon: "bi bi-receipt-cutoff",
+          description: "Generate and view billing records",
+          route: "/billing",
         },
         {
-          title: 'Inventory',
-          icon: 'bi bi-box-seam',
-          description: 'Track medicine and stock levels',
-          route: '/inventory'
+          title: "Prescriptions",
+          icon: "bi bi-file-earmark-medical-fill",
+          description: "Manage prescriptions and downloads",
+          route: "/prescriptions",
         },
-        {
-          title: 'Billing',
-          icon: 'bi bi-receipt-cutoff',
-          description: 'Generate and view billing records',
-          route: '/billing'
-        },
-        {
-          title: 'Prescriptions',
-          icon: 'bi bi-file-earmark-medical-fill',
-          description: 'Manage prescriptions and downloads',
-          route: '/prescriptions'
-        }
-      ]
+      ],
     };
   },
-  methods: {
-    handleNavigation(route) {
-      this.$router.push(route);
-    }
-  }
 };
 </script>
 

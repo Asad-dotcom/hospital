@@ -2,11 +2,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VuexPersist from 'vuex-persist';
+import appointments from './modules/appointments'
 
 import auth from './modules/auth';
 import patients from './modules/patients';
 import doctors from './modules/doctors';
-import appointments from './modules/appointments';
 import inventory from './modules/inventory';
 import billing from './modules/billing';
 
@@ -30,7 +30,7 @@ export default new Vuex.Store({
     auth,
     patients,
     doctors,
-    appointments,
+     appointments,
     inventory,
     billing,
   },

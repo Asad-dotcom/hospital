@@ -17,19 +17,19 @@ export default new Router({
     { path: '/patient/register', redirect: '/register' },
     { path: '/doctor/register', redirect: '/register' },
     { path: '/admin/register', redirect: '/register' },
-    { path: '/pharmacist/register', redirect: '/register' },
+    // { path: '/pharmacist/register', redirect: '/register' },
     { path: '/receptionist/register', redirect: '/register' },
     { path: '/patient/login', redirect: '/login' },
     { path: '/doctor/login', redirect: '/login' },
     { path: '/admin/login', redirect: '/login' },
-    { path: '/pharmacist/login', redirect: '/login' },
+    // { path: '/pharmacist/login', redirect: '/login' },
     { path: '/receptionist/login', redirect: '/login' },
 
     // Dashboards
     { path: '/dashboard/patient', name: 'PatientDashboard', component: () => import('@/views/dashboard/PatientDashboard.vue') },
     { path: '/dashboard/doctor', name: 'DoctorDashboard', component: () => import('@/views/dashboard/DoctorDashboard.vue') },
     { path: '/dashboard/admin', name: 'AdminDashboard', component: () => import('@/views/dashboard/AdminDashboard.vue') },
-    { path: '/dashboard/pharmacist', name: 'PharmacistDashboard', component: () => import('@/views/dashboard/PharmacistDashboard.vue') },
+  
     { path: '/dashboard/receptionist', name: 'ReceptionistDashboard', component: () => import('@/views/dashboard/ReceptionistDashboard.vue') },
 
     // Patients
@@ -43,19 +43,33 @@ export default new Router({
     { path: '/doctors/new', name: 'DoctorForm', component: () => import('@/views/doctors/DoctorForm.vue') },
     { path: '/doctors/:id/edit', name: 'DoctorEdit', component: () => import('@/views/doctors/DoctorForm.vue') },
 
-    // Appointments
-    { path: '/appointments/request', name: 'AppointmentRequest', component: () => import('@/views/appointments/AppointmentRequest.vue') },
-    { path: '/appointments/calendar', name: 'AppointmentCalendar', component: () => import('@/views/appointments/AppointmentCalendar.vue') },
-    { path: '/appointments/approve', name: 'AppointmentApproval', component: () => import('@/views/appointments/AppointmentApproval.vue') },
-    { path: '/appointments/status', name: 'AppointmentStatus', component: () => import('@/views/appointments/AppointmentStatus.vue') },
+    // Appointments - Simplified Structure
+ {
+      path: '/admin/appointments',
+      name: 'AdminAppointments',
+      component: () => import('@/views/appointments/DoctorAppointments.vue') // file name must match exactly
+    },
+    {
+      path: '/patient/appointments',
+      name: 'PatientAppointments',
+      component: () => import('@/views/appointments/PatientAppointments.vue') // file name must match exactly
+    },
+
+
+
 
     // Inventory
-    { path: '/inventory', name: 'MedicineList', component: () => import('@/views/inventory/MedicineList.vue') },
-    { path: '/inventory/new', name: 'MedicineForm', component: () => import('@/views/inventory/MedicineForm.vue') },
-    { path: '/inventory/:id/edit', name: 'MedicineEdit', component: () => import('@/views/inventory/MedicineForm.vue') },
-    { path: '/inventory/alerts', name: 'StockAlerts', component: () => import('@/views/inventory/StockAlerts.vue') },
-    { path: '/inventory/export', name: 'InventoryExport', component: () => import('@/views/inventory/InventoryExport.vue') },
+{
+  path: '/inventory',
+  name: 'MedicineList',
+  component: () => import('@/views/inventory/MedicineList.vue')
+},
+{
+  path: '/inventory/medicine-form',
+  name: 'MedicineForm',
+  component: () => import('@/views/inventory/MedicineForm.vue'),
 
+},
     // Billing & Prescriptions
     { path: '/billing/new', name: 'BillingForm', component: () => import('@/views/billing/BillingForm.vue') },
     { path: '/billing/history', name: 'BillingHistory', component: () => import('@/views/billing/BillingHistory.vue') },

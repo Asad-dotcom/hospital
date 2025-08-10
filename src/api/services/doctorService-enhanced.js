@@ -1,4 +1,3 @@
-// doctorService-enhanced.js
 import api from '../index'
 
 class EnhancedDoctorService {
@@ -15,18 +14,26 @@ class EnhancedDoctorService {
     }
   }
 
-  async createDoctor(doctorData) {
+  async createDoctor(formData) {
     try {
-      const response = await api.post(this.baseEndpoint, doctorData)
+      const response = await api.post(this.baseEndpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       return response.data
     } catch (error) {
       throw this.handleError(error)
     }
   }
 
-  async updateDoctor(id, doctorData) {
+  async updateDoctor(id, formData) {
     try {
-      const response = await api.put(`${this.baseEndpoint}/${id}`, doctorData)
+      const response = await api.post(`${this.baseEndpoint}/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       return response.data
     } catch (error) {
       throw this.handleError(error)
