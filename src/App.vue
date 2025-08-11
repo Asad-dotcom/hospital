@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <!-- Sidebar -->
+     <!-- sidebar -->
     <Sidebar 
       v-if="isAuthenticated" 
       :class="{ 'collapsed': isSidebarCollapsed }"
