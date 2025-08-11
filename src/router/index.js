@@ -18,19 +18,19 @@ export default new Router({
     { path: '/doctor/register', redirect: '/register' },
     { path: '/admin/register', redirect: '/register' },
     // { path: '/pharmacist/register', redirect: '/register' },
-    { path: '/receptionist/register', redirect: '/register' },
+    // { path: '/receptionist/register', redirect: '/register' },
     { path: '/patient/login', redirect: '/login' },
     { path: '/doctor/login', redirect: '/login' },
     { path: '/admin/login', redirect: '/login' },
     // { path: '/pharmacist/login', redirect: '/login' },
-    { path: '/receptionist/login', redirect: '/login' },
+    // { path: '/receptionist/login', redirect: '/login' },
 
     // Dashboards
     { path: '/dashboard/patient', name: 'PatientDashboard', component: () => import('@/views/dashboard/PatientDashboard.vue') },
     { path: '/dashboard/doctor', name: 'DoctorDashboard', component: () => import('@/views/dashboard/DoctorDashboard.vue') },
     { path: '/dashboard/admin', name: 'AdminDashboard', component: () => import('@/views/dashboard/AdminDashboard.vue') },
   
-    { path: '/dashboard/receptionist', name: 'ReceptionistDashboard', component: () => import('@/views/dashboard/ReceptionistDashboard.vue') },
+   
 
     // Patients
     { path: '/patients', name: 'PatientList', component: () => import('@/views/patients/PatientList.vue') },
@@ -44,17 +44,21 @@ export default new Router({
     { path: '/doctors/:id/edit', name: 'DoctorEdit', component: () => import('@/views/doctors/DoctorForm.vue') },
 
     // Appointments - Simplified Structure
- {
-      path: '/admin/appointments',
-      name: 'AdminAppointments',
-      component: () => import('@/views/appointments/DoctorAppointments.vue') // file name must match exactly
-    },
+{
+  path: '/admin/appointments',
+  name: 'AdminAppointments',
+  component: () => import('@/views/appointments/DoctorAppointments.vue')
+},
     {
       path: '/patient/appointments',
       name: 'PatientAppointments',
       component: () => import('@/views/appointments/PatientAppointments.vue') // file name must match exactly
     },
-
+{
+  path: '/appointments/request',
+  name: 'RequestAppointment',
+  component: () => import('@/views/appointments/RequestAppointment.vue')
+},
 
 
 
@@ -70,13 +74,28 @@ export default new Router({
   component: () => import('@/views/inventory/MedicineForm.vue'),
 
 },
-    // Billing & Prescriptions
-    { path: '/billing/new', name: 'BillingForm', component: () => import('@/views/billing/BillingForm.vue') },
-    { path: '/billing/history', name: 'BillingHistory', component: () => import('@/views/billing/BillingHistory.vue') },
-    { path: '/billing/prescriptions', name: 'PrescriptionList', component: () => import('@/views/billing/PrescriptionList.vue') },
-    { path: '/billing/prescriptions/new', name: 'PrescriptionForm', component: () => import('@/views/billing/PrescriptionForm.vue') },
-    { path: '/billing/prescriptions/:id/edit', name: 'PrescriptionEdit', component: () => import('@/views/billing/PrescriptionForm.vue') },
 
+
+
+    // Billing & Prescriptions
+  // Remove this line:
+// { path: '/dashboard/receptionist', name: 'ReceptionistDashboard', component: () => import('@/views/dashboard/ReceptionistDashboard.vue') },
+
+// Update billing routes to:
+{
+  path: '/billing',
+  name: 'BillingDashboard',
+  component: () => import('@/views/billing/BillingDashboard.vue'),
+  children: [
+    { path: '', redirect: 'pending' },
+    { path: 'pending', name: 'PendingBilling', component: () => import('@/views/billing/PendingBilling.vue') },
+    { path: 'new', name: 'BillingForm', component: () => import('@/views/billing/BillingForm.vue') },
+    { path: 'history', name: 'BillingHistory', component: () => import('@/views/billing/BillingHistory.vue') },
+    { path: 'prescriptions', name: 'PrescriptionList', component: () => import('@/views/billing/PrescriptionList.vue') },
+    { path: 'prescriptions/new', name: 'PrescriptionForm', component: () => import('@/views/billing/PrescriptionForm.vue') },
+    { path: 'prescriptions/:id/edit', name: 'PrescriptionEdit', component: () => import('@/views/billing/PrescriptionForm.vue') }
+  ]
+},
     // 404 - Keep at the end
     { path: '*', name: 'NotFound', component: () => import('@/views/NotFound.vue') }
   ]

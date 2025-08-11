@@ -57,6 +57,7 @@
 
 <script>
 import DownloadButton from './DownloadButton.vue';
+import BillingService from '@/api/services/billingService';
 
 export default {
   components: {
@@ -80,6 +81,22 @@ export default {
     }
   },
   methods: {
+       async exportPrescription(id) {
+      try {
+        const response = await BillingService.exportPrescription(id);
+        // Add this code to handle the download:
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `prescription-${id}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        this.$toast.error('Export failed');
+      }
+    },
     exportExcel() {
       // Create a Blob with Excel data
       const data = this.exportData;

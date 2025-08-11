@@ -9,13 +9,23 @@
       </div>
 
       <div class="form-group mb-3">
-        <label>Quantity</label>
-        <input v-model.number="form.quantity" type="number" class="form-control" required min="1" />
+        <label>Brand</label>
+        <input v-model="form.brand" class="form-control" required />
+      </div>
+
+      <div class="form-group mb-3">
+        <label>Stock</label>
+        <input v-model.number="form.stock" type="number" class="form-control" required min="0" />
+      </div>
+
+      <div class="form-group mb-3">
+        <label>Price</label>
+        <input v-model.number="form.price" type="number" step="0.01" class="form-control" required />
       </div>
 
       <div class="form-group mb-3">
         <label>Expiry Date</label>
-        <input v-model="form.expiry" type="date" class="form-control" required />
+        <input v-model="form.expiry_date" type="date" class="form-control" required />
       </div>
 
       <button type="submit" class="btn btn-success me-2" :disabled="loading">
@@ -35,8 +45,10 @@ export default {
     return {
       form: {
         name: '',
-        quantity: 0,
-        expiry: ''
+        brand: '',
+        stock: 0,
+        price: 0,
+        expiry_date: ''
       },
       isEdit: false,
       loading: false,

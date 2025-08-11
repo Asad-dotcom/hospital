@@ -36,11 +36,16 @@
 </template>
 
 <script>
+import BillingService from '@/api/services/billingService';
+
 export default {
-  computed: {
-    bills() {
-      return this.$store.state.billing.bills;
-    },
+  data() {
+    return {
+      billingHistory: []
+    }
   },
-};
+  async created() {
+    this.billingHistory = await BillingService.getBillingHistory();
+  }
+}
 </script>

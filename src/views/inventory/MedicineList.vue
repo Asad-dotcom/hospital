@@ -137,20 +137,22 @@ export default {
       const diffDays = (expiry - today) / (1000 * 60 * 60 * 24)
       return diffDays < 30 && diffDays > 0
     },
-    confirmDelete(id) {
-      if (confirm('Are you sure you want to delete this medicine?')) {
-        this.deleteMedicine(id)
-      }
-    },
-    async deleteMedicine(id) {
-      try {
-        await medicineService.deleteMedicine(id)
-        this.$toast.success('Medicine deleted successfully')
-        await this.fetchMedicines()
-      } catch (error) {
-        this.$toast.error(error.response?.data?.message || 'Failed to delete medicine')
-      }
-    }
+  confirmDelete(id) {
+  if (confirm('Are you sure you want to delete this medicine?')) {
+    this.deleteMedicine(id)
+  }
+},
+
+async deleteMedicine(id) {
+  try {
+    await medicineService.deleteMedicine(id)
+    this.$toast.success('Medicine deleted successfully')
+    await this.fetchMedicines() // refresh table
+  } catch (error) {
+    console.error('Delete error:', error)
+    this.$toast.error(error.response?.data?.message || 'Failed to delete medicine')
+  }
+}
   }
 }
 </script>
